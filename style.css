@@ -10,6 +10,11 @@
       --radius: 14px;
       --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       --touch-target: 44px;
+      /* New mobile variables */
+      --header-padding-mobile: 16px;
+      --content-padding-mobile: 12px;
+      --font-size-mobile: 14px;
+      --button-height-mobile: 44px;
     }
 
     * {
@@ -23,16 +28,17 @@
 
     body {
       min-height: 100vh;
-      min-width: 1200px;
       background: radial-gradient(1200px 800px at 10% 20%, #000000 0%, transparent 60%),
         radial-gradient(1000px 700px at 90% 10%, #0d0d0d 0%, transparent 60%),
         linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2));
       color: var(--text);
-      padding: 24px;
+      padding: clamp(16px, 3vw, 24px);
+      overflow-x: hidden;
+      font-size: clamp(14px, 2vw, 16px);
     }
 
     .container {
-      width: 1200px;
+      width: min(100%, 1200px);
       margin: 0 auto;
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -116,11 +122,16 @@
     button {
       border: none;
       border-radius: 10px;
-      padding: 12px 16px;
+      padding: clamp(10px, 1.5vw, 12px) clamp(14px, 2vw, 16px);
       font-weight: 600;
       color: #0a0d1a;
       cursor: pointer;
       transition: transform 0.12s ease, box-shadow 0.2s;
+      min-height: var(--touch-target);
+      font-size: clamp(14px, 1.5vw, 16px);
+      white-space: nowrap;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     button:hover {
       transform: translateY(-1px);
@@ -328,11 +339,16 @@
 
     .chat-input {
       display: flex;
-      gap: 10px;
-      padding: 12px;
+      gap: clamp(8px, 1.5vw, 10px);
+      padding: clamp(10px, 2vw, 12px);
       background: rgba(255, 255, 255, 0.04);
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       padding-bottom: max(12px, env(safe-area-inset-bottom));
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
     /* Voice (Mic) Button */
     #voiceButton {
@@ -715,6 +731,13 @@
       display: block;
     }
 
+    /* Responsive Media Queries */
+    @media (max-width: 1200px) {
+      .container {
+        margin: 0 auto;
+      }
+    }
+
     @media (max-width: 900px) {
       .main-content {
         grid-template-columns: 1fr;
@@ -723,21 +746,165 @@
         grid-template-columns: 1fr;
       }
       .history-panel {
-        width: 300px;
+        width: min(300px, 90vw);
+      }
+      .code-container {
+        font-size: 14px;
+      }
+      textarea {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: var(--header-padding-mobile);
+      }
+      .chat-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .chat-controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+      #messages {
+        height: calc(100vh - 180px);
+      }
+      .message {
+        max-width: 90%;
+      }
+      .message.user {
+        margin-left: auto;
+        margin-right: 8px;
+      }
+      .message.assistant {
+        margin-right: auto;
+        margin-left: 8px;
+      }
+      .chat-input {
+        position: sticky;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(10px);
+        padding: calc(var(--content-padding-mobile) + env(safe-area-inset-bottom));
+      }
+      #userInput {
+        font-size: 16px;
+      }
+      button, 
+      .chat-history-btn,
+      #sendButton,
+      #voiceButton {
+        height: var(--button-height-mobile);
+      }
+      .code-copy-btn,
+      .message .copy-btn {
+        padding: 8px;
+        font-size: 12px;
       }
     }
 
     /* Extra small screens */
     @media (max-width: 600px) {
       body {
-        padding: 16px;
+        padding: 12px;
       }
       .chat-header {
-        padding: 10px 12px;
+        padding: 10px;
       }
-      .chat-controls { gap: 8px; }
-      #messages { padding: 12px; }
-      .chat-input { gap: 8px; padding: 10px; }
-      #sendButton { padding: 0 16px; }
-      #sendButton svg { width: 20px; height: 20px; }
+      h1 {
+        font-size: 1.5rem;
+      }
+      .chat-controls { 
+        gap: 6px; 
+      }
+      #messages { 
+        padding: 10px;
+        gap: 8px;
+      }
+      .chat-input { 
+        gap: 6px; 
+        padding: 8px;
+      }
+      #sendButton { 
+        padding: 0 14px; 
+      }
+      #sendButton svg { 
+        width: 18px; 
+        height: 18px; 
+      }
+      .message {
+        max-width: 95%;
+        font-size: var(--font-size-mobile);
+      }
+      .code-container {
+        margin: 8px 0;
+      }
+      .code-header {
+        padding: 6px 8px;
+      }
+      .code-content {
+        padding: 8px;
+        font-size: 13px;
+      }
+    }
+
+    /* Landscape mode optimization */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .chat-input {
+        position: relative;
+      }
+      #messages {
+        height: 40vh;
+      }
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) {
+      button:active,
+      .chat-history-btn:active,
+      #sendButton:active,
+      #voiceButton:active {
+        transform: scale(0.98);
+      }
+      .message .copy-btn,
+      .code-copy-btn {
+        opacity: 0.8;
+      }
+    }
+
+    /* Dark mode optimization */
+    @media (prefers-color-scheme: dark) {
+      .code-content {
+        background: #050a18;
+      }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Print optimization */
+    @media print {
+      body {
+        background: none;
+        color: black;
+      }
+      .container {
+        box-shadow: none;
+        border: 1px solid #ddd;
+      }
+      button, 
+      .chat-input,
+      .history-panel {
+        display: none !important;
+      }
     }
